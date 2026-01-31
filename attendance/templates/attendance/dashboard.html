@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Attendance Dashboard</title>
+</head>
+<body>
+
+<h2>📌 Smart Attendance Dashboard</h2>
+
+<!-- Error Message -->
+{% if error %}
+    <h3 style="color:red;">{{ error }}</h3>
+{% endif %}
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Student</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+
+    {% for record in records %}
+    <tr>
+        <td>{{ record.student.name }}</td>
+
+        <td>
+            {% if record.status %}
+                ✅ Present
+            {% else %}
+                ❌ Absent
+            {% endif %}
+        </td>
+
+        <td>
+            <a href="{% url 'mark_present' record.id %}">Mark Present</a>
+            |
+            <a href="{% url 'mark_absent' record.id %}">Mark Absent</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<br><br>
+
+<a href="{% url 'absentees' %}">
+    🔍 View Absentees List
+</a>
+
+</body>
+</html>

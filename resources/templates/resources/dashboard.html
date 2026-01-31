@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Campus Resource Dashboard</title>
+</head>
+<body>
+
+<h2>🏫 Campus Resource & Parameter Estimation Dashboard</h2>
+
+<hr>
+
+<h3>📌 Campus Summary</h3>
+
+<ul>
+    <li>Total Blocks: <b>{{ total_blocks }}</b></li>
+    <li>Total Classrooms: <b>{{ total_rooms }}</b></li>
+    <li>Total Capacity: <b>{{ total_capacity }}</b></li>
+    <li>Total Students: <b>{{ total_students }}</b></li>
+</ul>
+
+<hr>
+
+<h3>📊 Capacity Utilization</h3>
+
+<p>
+    Utilization Percentage: <b>{{ utilization }}%</b>
+</p>
+
+<hr>
+
+<h3>👨‍🏫 Faculty Workload Distribution</h3>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Faculty Name</th>
+        <th>Total Courses Assigned</th>
+    </tr>
+
+    {% for f in faculty_workload %}
+    <tr>
+        <td>{{ f.name }}</td>
+        <td>{{ f.courses }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="2">No faculty workload data available</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<hr>
+
+<a href="/attendance/">⬅ Back to Attendance</a>
+
+</body>
+</html>

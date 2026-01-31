@@ -1,0 +1,36 @@
+<h2>📌 Faculty Makeup Attendance Dashboard</h2>
+
+{% for data in dashboard_data %}
+
+    <hr>
+    <h3>📘 Subject: {{ data.class.subject }}</h3>
+    <p>📅 Date: {{ data.class.date }}</p>
+    <p>🔑 Code: <b>{{ data.class.remedial_code }}</b></p>
+
+    <!-- ✅ Present Students -->
+    <h4 style="color:green;">✅ Present Students</h4>
+
+    {% if data.present %}
+        <ul>
+            {% for s in data.present %}
+                <li>{{ s.name }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No student marked attendance yet.</p>
+    {% endif %}
+
+    <!-- ❌ Absent Students -->
+    <h4 style="color:red;">❌ Absentees</h4>
+
+    {% if data.absent %}
+        <ul>
+            {% for s in data.absent %}
+                <li>{{ s.name }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>All students are present 🎉</p>
+    {% endif %}
+
+{% endfor %}

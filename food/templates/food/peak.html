@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Peak Rush Times</title>
+</head>
+<body>
+
+<h2>📊 Peak Rush Time Report</h2>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Time Slot</th>
+        <th>Total Orders</th>
+    </tr>
+
+    {% for d in demand %}
+    <tr>
+        <td>{{ d.time_slot }}</td>
+        <td>{{ d.total }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="2">No orders yet</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<br>
+
+<a href="/food/">⬅ Back to Food Menu</a>
+
+</body>
+</html>

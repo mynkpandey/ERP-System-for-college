@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Food Stall Pre-Ordering</title>
+</head>
+<body>
+
+<h2>🍔 Smart Food Stall Pre-Ordering System</h2>
+
+<!-- ✅ Error Message -->
+{% if error %}
+    <h3 style="color:red;">{{ error }}</h3>
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+
+    <!-- Student Selection -->
+    <label>Select Student:</label>
+    <select name="student" required>
+        {% for s in students %}
+            <option value="{{ s.id }}">{{ s.name }}</option>
+        {% endfor %}
+    </select>
+
+    <br><br>
+
+    <!-- Food Item Selection -->
+    <label>Select Food Item:</label>
+    <select name="item" required>
+        {% for i in items %}
+            <option value="{{ i.id }}">
+                {{ i.name }} (₹{{ i.price }})
+            </option>
+        {% empty %}
+            <option value="">No food items available</option>
+        {% endfor %}
+    </select>
+
+    <br><br>
+
+    <!-- Time Slot -->
+    <label>Select Time Slot:</label>
+    <select name="time_slot" required>
+        <option value="10:30 AM">10:30 AM</option>
+        <option value="12:30 PM">12:30 PM</option>
+        <option value="02:30 PM">02:30 PM</option>
+        <option value="04:30 PM">04:30 PM</option>
+    </select>
+
+    <br><br>
+
+    <button type="submit">✅ Place Order</button>
+</form>
+
+<br><br>
+
+<a href="/food/peak/">📊 View Peak Rush Times</a>
+
+</body>
+</html>

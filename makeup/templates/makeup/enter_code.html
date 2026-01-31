@@ -1,0 +1,24 @@
+<h2>🎯 Remedial Attendance Code Entry</h2>
+
+{% if error %}
+<h3 style="color:red;">{{ error }}</h3>
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+
+    <label>Enter Remedial Code:</label><br>
+    <input type="text" name="code" placeholder="Enter 6-digit code"><br><br>
+
+    <label>Select Student:</label><br>
+    <select name="student">
+        <option value="">-- Select Student --</option>
+        {% for s in students %}
+            <option value="{{ s.id }}">{{ s.name }}</option>
+        {% endfor %}
+    </select>
+
+    <br><br>
+
+    <button type="submit">✅ Mark Attendance</button>
+</form>
