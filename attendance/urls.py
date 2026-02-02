@@ -2,10 +2,16 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("", views.attendance_dashboard, name="attendance_dashboard"),
+    path("", views.dashboard, name="dashboard"),
 
-    path("present/<int:id>/", views.mark_present, name="mark_present"),
-    path("absent/<int:id>/", views.mark_absent, name="mark_absent"),
+    # Camera attendance
+    path("mark/", views.mark_attendance, name="mark_attendance"),
+    path("finalize/", views.finalize_hour, name="finalize_hour"),
+    path("finalize/slot/", views.finalize_slot, name="finalize_slot"),
 
-    path("absentees/", views.absentee_list, name="absentees"),
+    # Manual attendance dashboard
+    path("faculty/", views.attendance_dashboard, name="attendance_dashboard"),
+
+    # Absentees list
+    path("absentees/", views.absentee_list, name="absentee_list"),
 ]

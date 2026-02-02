@@ -1,60 +1,20 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Smart Attendance Dashboard</title>
-</head>
-<body>
+<h2>🚨 Absentees List</h2>
 
-    <h2>📌 Smart Attendance Dashboard</h2>
+<ul>
+    {% for a in absentees %}
+        <li>{{ a.student.name }} - Parent: {{ a.student.parent_email }}</li>
+    {% empty %}
+        <li>No absentees 🎉</li>
+    {% endfor %}
+</ul>
 
-    <!-- ✅ Error Message if Faculty not added -->
-    {% if error %}
-        <h3 style="color:red;">{{ error }}</h3>
-    {% endif %}
+<hr>
 
-    <table border="1" cellpadding="10">
-        <tr>
-            <th>Student</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
+<h3>📩 Notifications</h3>
+<ul>
+    {% for msg in notifications %}
+        <li>{{ msg }}</li>
+    {% endfor %}
+</ul>
 
-        <!-- ✅ Display Attendance Records -->
-        {% for record in records %}
-        <tr>
-            <td>{{ record.student.name }}</td>
-
-            <td>
-                {% if record.status %}
-                    ✅ Present
-                {% else %}
-                    ❌ Absent
-                {% endif %}
-            </td>
-
-            <td>
-                <a href="{% url 'mark_present' record.id %}">
-                    Mark Present
-                </a>
-                |
-                <a href="{% url 'mark_absent' record.id %}">
-                    Mark Absent
-                </a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="3">No attendance records found.</td>
-        </tr>
-        {% endfor %}
-    </table>
-
-    <br><br>
-
-    <!-- ✅ Absentee List Button -->
-    <a href="{% url 'absentees' %}">
-        🔍 View Absentees List
-    </a>
-
-</body>
-</html>
+<a href="{% url 'dashboard' %}">⬅ Back to Dashboard</a>

@@ -7,16 +7,64 @@
 
 <h2>📌 Smart Attendance Dashboard</h2>
 
+{% if messages %}
+    {% for message in messages %}
+        <h3 style="color:{% if 'error' in message.tags %}red{% else %}green{% endif %};">{{ message }}</h3>
+
+    {% endfor %}
+{% endif %}
+
 <!-- Error Message -->
 {% if error %}
     <h3 style="color:red;">{{ error }}</h3>
 {% endif %}
 
+<!-- ✅ Buttons Section -->
+<hr>
+
+<a href="{% url 'mark_attendance' %}">
+    <button style="padding:10px; font-size:16px;">
+        📷 Mark Attendance Using Camera
+    </button>
+</a>
+
+<a href="{% url 'attendance_dashboard' %}">
+    <button style="padding:10px; font-size:16px;">
+        📋 Generate Faculty Attendance Sheet
+    </button>
+</a>
+
+<a href="{% url 'finalize_hour' %}">
+    <button style="padding:10px; font-size:16px;">
+        ⏳ Finalize Current Hour & Export Excel
+    </button>
+</a>
+
+<form method="get" action="{% url 'finalize_slot' %}" style="margin-top:10px;">
+    <label>Select Class Slot:</label>
+    <select name="slot">
+        {% for s in class_slots %}
+            <option value="{{ s }}">{{ s }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" style="padding:10px; font-size:16px;">
+        ⏱ Finalize Selected Slot & Export Excel
+    </button>
+</form>
+
+<a href="{% url 'absentee_list' %}">
+    <button style="padding:10px; font-size:16px;">
+        🚨 View Absentees List
+    </button>
+</a>
+
+<hr><br>
+
+<!-- ✅ Attendance Table -->
 <table border="1" cellpadding="10">
     <tr>
         <th>Student</th>
         <th>Status</th>
-        <th>Action</th>
     </tr>
 
     {% for record in records %}
@@ -31,20 +79,13 @@
             {% endif %}
         </td>
 
-        <td>
-            <a href="{% url 'mark_present' record.id %}">Mark Present</a>
-            |
-            <a href="{% url 'mark_absent' record.id %}">Mark Absent</a>
-        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="2">No attendance records found.</td>
     </tr>
     {% endfor %}
 </table>
-
-<br><br>
-
-<a href="{% url 'absentees' %}">
-    🔍 View Absentees List
-</a>
 
 </body>
 </html>
