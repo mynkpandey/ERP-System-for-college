@@ -62,7 +62,15 @@ def order_success(request):
 def peak_times(request):
 
     demand = FoodOrder.objects.values("time_slot").annotate(total=Count("id"))
+    
+    # Calculate additional statistics for the enhanced template
+    total_orders = sum(d['total'] for d in demand)
+    busiest_slot = max(demand, key=lambda x: x['total'], default={'time_slot': 'No data', 'total': 0})
+    max_orders = max([d['total'] for d in demand], default=1)
 
     return render(request, "food/peak.html", {
-        "demand": demand
+        "demand": demand,
+        "total_orders": total_orders,
+        "busiest_slot": busiest_slot,
+        "max_orders": max_orders
     })

@@ -1,0 +1,293 @@
+/* LPU Campus Management System - Custom Styles */
+:root {
+    --lpu-primary: #0066b3;
+    --lpu-secondary: #ff6b00;
+    --lpu-light: #f8f9fa;
+    --lpu-dark: #343a40;
+    --lpu-success: #28a745;
+    --lpu-danger: #dc3545;
+    --lpu-warning: #ffc107;
+    --lpu-info: #17a2b8;
+}
+
+/* Global Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7f9;
+}
+
+/* Navigation */
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.navbar-dark.bg-primary {
+    background-color: var(--lpu-primary) !important;
+}
+
+/* Sidebar */
+.sidebar {
+    min-height: calc(100vh - 56px);
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    background: linear-gradient(180deg, var(--lpu-primary) 0%, #004d8c 100%);
+}
+
+.sidebar .nav-link {
+    color: white !important;
+    padding: 12px 20px;
+    margin: 4px 0;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.sidebar .nav-link.active {
+    background-color: var(--lpu-secondary);
+}
+
+.sidebar-heading {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+/* Content Area */
+.content {
+    padding: 20px 0;
+}
+
+.page-title {
+    color: var(--lpu-primary);
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--lpu-primary), #004d8c);
+    color: white;
+    font-weight: 600;
+    border-radius: 10px 10px 0 0 !important;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--lpu-primary);
+    border-color: var(--lpu-primary);
+}
+
+.btn-primary:hover {
+    background-color: #004d8c;
+    border-color: #004d8c;
+}
+
+.btn-outline-primary {
+    color: var(--lpu-primary);
+    border-color: var(--lpu-primary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--lpu-primary);
+    border-color: var(--lpu-primary);
+}
+
+.btn-success {
+    background-color: var(--lpu-success);
+    border-color: var(--lpu-success);
+}
+
+.btn-danger {
+    background-color: var(--lpu-danger);
+    border-color: var(--lpu-danger);
+}
+
+.btn-warning {
+    background-color: var(--lpu-warning);
+    border-color: var(--lpu-warning);
+    color: var(--lpu-dark);
+}
+
+/* Tables */
+.table {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.table thead th {
+    background: linear-gradient(135deg, var(--lpu-primary), #004d8c);
+    color: white;
+    border: none;
+    font-weight: 600;
+}
+
+.table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(0, 102, 179, 0.05);
+}
+
+/* Status Indicators */
+.status-present {
+    color: var(--lpu-success);
+    font-weight: 600;
+}
+
+.status-absent {
+    color: var(--lpu-danger);
+    font-weight: 600;
+}
+
+.status-pending {
+    color: var(--lpu-warning);
+    font-weight: 600;
+}
+
+/* Dashboard Cards */
+.dashboard-card {
+    text-align: center;
+    padding: 20px;
+}
+
+.dashboard-card .card-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.dashboard-card .card-text {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+/* Forms */
+.form-control:focus {
+    border-color: var(--lpu-primary);
+    box-shadow: 0 0 0 0.2rem rgba(0, 102, 179, 0.25);
+}
+
+.form-label {
+    font-weight: 500;
+    color: var(--lpu-dark);
+}
+
+/* Alerts */
+.alert {
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.alert-success {
+    background-color: rgba(40, 167, 69, 0.15);
+    color: var(--lpu-success);
+}
+
+.alert-danger {
+    background-color: rgba(220, 53, 69, 0.15);
+    color: var(--lpu-danger);
+}
+
+.alert-warning {
+    background-color: rgba(255, 193, 7, 0.15);
+    color: var(--lpu-warning);
+}
+
+/* Footer */
+.footer {
+    background-color: var(--lpu-light);
+    border-top: 1px solid #dee2e6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        min-height: auto;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .dashboard-card .card-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* Custom Utilities */
+.text-lpu-primary {
+    color: var(--lpu-primary) !important;
+}
+
+.bg-lpu-primary {
+    background-color: var(--lpu-primary) !important;
+}
+
+.border-lpu-primary {
+    border-color: var(--lpu-primary) !important;
+}
+
+/* Loading Animation */
+.loading-spinner {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid var(--lpu-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Badges */
+.badge-lpu {
+    background-color: var(--lpu-primary);
+    color: white;
+}
+
+/* Progress Bars */
+.progress {
+    border-radius: 10px;
+    height: 8px;
+}
+
+.progress-bar {
+    background-color: var(--lpu-primary);
+}
+
+/* Custom Button Sizes */
+.btn-lg {
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.875rem;
+    border-radius: 6px;
+}

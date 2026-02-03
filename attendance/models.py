@@ -20,3 +20,8 @@ class Attendance(models.Model):
 
     def __str__(self):
         return f"{self.student.name} - {self.date}"
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["student", "date"], name="unique_attendance_per_student_day")
+        ]

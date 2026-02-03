@@ -1,61 +1,144 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Food Stall Pre-Ordering</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
 
-<h2>🍔 Smart Food Stall Pre-Ordering System</h2>
+{% block title %}Food Services - LPU Campus{% endblock %}
 
-<!-- ✅ Error Message -->
-{% if error %}
-    <h3 style="color:red;">{{ error }}</h3>
-{% endif %}
+{% block page_title %}
+🍔 Food Services - Pre-Ordering System
+{% endblock %}
 
-<form method="POST">
-    {% csrf_token %}
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Place Food Order</h5>
+            </div>
+            <div class="card-body">
+                {% if error %}
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle"></i> {{ error }}
+                </div>
+                {% endif %}
 
-    <!-- Student Selection -->
-    <label>Select Student:</label>
-    <select name="student" required>
-        {% for s in students %}
-            <option value="{{ s.id }}">{{ s.name }}</option>
-        {% endfor %}
-    </select>
+                <form method="POST" class="needs-validation" novalidate>
+                    {% csrf_token %}
 
-    <br><br>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">👨‍🎓 Select Student:</label>
+                            <select name="student" class="form-select" required>
+                                <option value="">Choose student...</option>
+                                {% for s in students %}
+                                <option value="{{ s.id }}">{{ s.name }} ({{ s.reg_no }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">⏰ Time Slot:</label>
+                            <select name="time_slot" class="form-select" required>
+                                <option value="">Choose time slot...</option>
+                                <option value="10:30 AM">10:30 AM</option>
+                                <option value="12:30 PM">12:30 PM</option>
+                                <option value="02:30 PM">02:30 PM</option>
+                                <option value="04:30 PM">04:30 PM</option>
+                            </select>
+                        </div>
+                    </div>
 
-    <!-- Food Item Selection -->
-    <label>Select Food Item:</label>
-    <select name="item" required>
-        {% for i in items %}
-            <option value="{{ i.id }}">
-                {{ i.name }} (₹{{ i.price }})
-            </option>
-        {% empty %}
-            <option value="">No food items available</option>
-        {% endfor %}
-    </select>
+                    <div class="mb-4">
+                        <label class="form-label">🍽️ Select Food Item:</label>
+                        <div class="row">
+                            {% for i in items %}
+                            <div class="col-md-6 mb-3">
+                                <div class="card food-item-card">
+                                    <div class="card-body">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="item" 
+                                                   id="item{{ i.id }}" value="{{ i.id }}" required>
+                                            <label class="form-check-label" for="item{{ i.id }}">
+                                                <strong>{{ i.name }}</strong>
+                                                <br>
+                                                <span class="text-muted">₹{{ i.price }}</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="col-12">
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-info-circle"></i> No food items available at the moment.
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
 
-    <br><br>
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="bi bi-cart-check"></i> Place Order
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 
-    <!-- Time Slot -->
-    <label>Select Time Slot:</label>
-    <select name="time_slot" required>
-        <option value="10:30 AM">10:30 AM</option>
-        <option value="12:30 PM">12:30 PM</option>
-        <option value="02:30 PM">02:30 PM</option>
-        <option value="04:30 PM">04:30 PM</option>
-    </select>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">📊 Order Statistics</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span>Total Items:</span>
+                    <span class="badge bg-primary">{{ items.count }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span>Available Students:</span>
+                    <span class="badge bg-success">{{ students.count }}</span>
+                </div>
+                <hr>
+                <a href="{% url 'peak_times' %}" class="btn btn-outline-primary w-100 mb-2">
+                    <i class="bi bi-bar-chart"></i> View Peak Times
+                </a>
+                <a href="/attendance/" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-arrow-left"></i> Back to Attendance
+                </a>
+            </div>
+        </div>
 
-    <br><br>
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0">ℹ️ How it Works</h5>
+            </div>
+            <div class="card-body">
+                <ol class="list-group list-group-numbered">
+                    <li class="list-group-item">Select your student profile</li>
+                    <li class="list-group-item">Choose preferred time slot</li>
+                    <li class="list-group-item">Select food item</li>
+                    <li class="list-group-item">Place order and avoid queues!</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <button type="submit">✅ Place Order</button>
-</form>
+<style>
+.food-item-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
 
-<br><br>
+.food-item-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
 
-<a href="{% url 'peak_times' %}">📊 View Peak Rush Times</a>
+.food-item-card .form-check-input:checked + .form-check-label {
+    color: var(--lpu-primary);
+    font-weight: 600;
+}
+</style>
 
-</body>
-</html>
+{% endblock %}

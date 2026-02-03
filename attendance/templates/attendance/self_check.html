@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Camera Self-Check</title>
+</head>
+<body>
+<h2>Camera Self-Check</h2>
+<ul>
+    <li>Libraries: {{ libs_status }}</li>
+    <li>Camera: {{ camera_status }}</li>
+    <li>Total students: {{ total_students }}</li>
+    <li>With images: {{ with_images }}</li>
+    <li>Missing files: {{ missing_files }}</li>
+    <li>Encodings available: {{ encodings_available }}</li>
+    <li>Faces detected in frame: {{ faces_detected }}</li>
+</ul>
+<a href="{% url 'dashboard' %}">Back</a>
+</body>
+</html>

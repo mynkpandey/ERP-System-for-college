@@ -64,7 +64,7 @@ ROOT_URLCONF = 'lpu_campus.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -125,6 +125,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -142,5 +146,8 @@ CLASS_SLOTS = [
     "15:00-16:00",
     "16:00-17:00",
 ]
+FACE_MATCH_THRESHOLD = 0.6
+FACE_MARGIN = 0.08
+FACE_STABLE_FRAMES = 3
 
 

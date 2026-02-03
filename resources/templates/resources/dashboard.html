@@ -1,56 +1,460 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Campus Resource Dashboard</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
 
-<h2>🏫 Campus Resource & Parameter Estimation Dashboard</h2>
+{% block title %}Campus Resources - LPU Campus{% endblock %}
 
-<hr>
+{% block page_title %}
+🏫 Campus Resource Management Dashboard
+{% endblock %}
 
-<h3>📌 Campus Summary</h3>
+{% block content %}
+<div class="row">
+    <!-- Summary Cards -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total Blocks
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_blocks }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-building fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<ul>
-    <li>Total Blocks: <b>{{ total_blocks }}</b></li>
-    <li>Total Classrooms: <b>{{ total_rooms }}</b></li>
-    <li>Total Capacity: <b>{{ total_capacity }}</b></li>
-    <li>Total Students: <b>{{ total_students }}</b></li>
-</ul>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Total Classrooms
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_rooms }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-door-open fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<hr>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Total Capacity
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_capacity }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-people fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<h3>📊 Capacity Utilization</h3>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Total Students
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_students }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-mortarboard fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<p>
-    Utilization Percentage: <b>{{ utilization }}%</b>
-</p>
+<div class="row">
+    <!-- Capacity Utilization -->
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">📊 Capacity Utilization Analysis</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="text-center">
+                            <div class="gauge-container" style="position: relative; width: 200px; height: 200px; margin: 0 auto;">
+                                <div class="gauge" 
+                                     style="width: 200px; height: 200px; border-radius: 50%; 
+                                            background: conic-gradient(
+                                                #4e73df 0% {{ utilization }}%, 
+                                                #eaecf4 {{ utilization }}% 100%
+                                            );">
+                                </div>
+                                <div class="gauge-center" 
+                                     style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                                            width: 150px; height: 150px; border-radius: 50%; 
+                                            background: white; display: flex; align-items: center; justify-content: center;">
+                                    <span class="h4 font-weight-bold text-primary">{{ utilization }}%</span>
+                                </div>
+                            </div>
+                            <p class="mt-3 text-muted">Overall Campus Utilization</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="utilization-details">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span>Available Capacity:</span>
+                                <span class="badge bg-success">{{ total_capacity }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span>Current Enrollment:</span>
+                                <span class="badge bg-info">{{ total_students }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span>Utilization Status:</span>
+                                {% if utilization >= 80 %}
+                                <span class="badge bg-danger">High</span>
+                                {% elif utilization >= 50 %}
+                                <span class="badge bg-warning">Medium</span>
+                                {% else %}
+                                <span class="badge bg-success">Low</span>
+                                {% endif %}
+                            </div>
+                            <div class="alert alert-{% if utilization >= 80 %}danger{% elif utilization >= 50 %}warning{% else %}success{% endif %} mt-3">
+                                <i class="bi bi-{% if utilization >= 80 %}exclamation-triangle{% elif utilization >= 50 %}info-circle{% else %}check-circle{% endif %}"></i>
+                                {% if utilization >= 80 %}
+                                High utilization - Consider expanding facilities
+                                {% elif utilization >= 50 %}
+                                Moderate utilization - Optimal range
+                                {% else %}
+                                Low utilization - Capacity underutilized
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<hr>
+        <!-- Faculty Management Sheet -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">👨‍🏫 Faculty Management Sheet</h6>
+                <div class="d-flex">
+                    <input type="text" class="form-control form-control-sm me-2" placeholder="Search faculty..." id="facultySearch">
+                    <select class="form-select form-select-sm" id="workloadFilter">
+                        <option value="all">All Workload</option>
+                        <option value="high">High Workload</option>
+                        <option value="medium">Medium Workload</option>
+                        <option value="low">Low Workload</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Faculty Statistics -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card bg-primary text-white shadow">
+                            <div class="card-body py-3">
+                                <div class="text-xs font-weight-bold">Total Faculty</div>
+                                <div class="h5 mb-0">{{ faculty_workload|length }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-success text-white shadow">
+                            <div class="card-body py-3">
+                                <div class="text-xs font-weight-bold">Available Faculty</div>
+                                <div class="h5 mb-0">{{ faculty_workload|length }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-warning text-white shadow">
+                            <div class="card-body py-3">
+                                <div class="text-xs font-weight-bold">Avg. Courses</div>
+                                <div class="h5 mb-0">{{ avg_courses|floatformat:1 }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-info text-white shadow">
+                            <div class="card-body py-3">
+                                <div class="text-xs font-weight-bold">Max Workload</div>
+                                <div class="h5 mb-0">{{ max_courses }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-<h3>👨‍🏫 Faculty Workload Distribution</h3>
+                <!-- Faculty Table -->
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" width="100%" cellspacing="0" id="facultyTable">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Faculty ID</th>
+                                <th>Name</th>
+                                <th>Department</th>
+                                <th>Courses</th>
+                                <th>Workload Level</th>
+                                <th>Utilization</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for f in faculty_workload %}
+                            <tr data-workload="{% if f.courses >= 4 %}high{% elif f.courses >= 2 %}medium{% else %}low{% endif %}">
+                                <td><small class="text-muted">FAC-{{ forloop.counter|stringformat:"03d" }}</small></td>
+                                <td>
+                                    <strong>{{ f.name }}</strong>
+                                    {% if f.courses >= 4 %}
+                                    <br><small class="text-danger">⚠️ High workload alert</small>
+                                    {% endif %}
+                                </td>
+                                <td>Computer Science</td>
+                                <td>
+                                    <span class="badge bg-primary rounded-pill">{{ f.courses }} courses</span>
+                                </td>
+                                <td>
+                                    {% if f.courses >= 4 %}
+                                    <span class="badge bg-danger"><i class="bi bi-exclamation-triangle"></i> High</span>
+                                    {% elif f.courses >= 2 %}
+                                    <span class="badge bg-warning"><i class="bi bi-info-circle"></i> Medium</span>
+                                    {% else %}
+                                    <span class="badge bg-success"><i class="bi bi-check-circle"></i> Low</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="progress" style="height: 8px; width: 80px;">
+                                        {% widthratio f.courses max_courses 100 as percentage %}
+                                        <div class="progress-bar bg-info" role="progressbar" 
+                                             style="width: {{ percentage }}%" 
+                                             aria-valuenow="{{ percentage }}" 
+                                             aria-valuemin="0" aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">{{ percentage }}% utilized</small>
+                                </td>
+                                <td>
+                                    {% if f.courses >= 4 %}
+                                    <span class="badge bg-danger">Overloaded</span>
+                                    {% elif f.courses >= 2 %}
+                                    <span class="badge bg-success">Optimal</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">Available</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" data-bs-toggle="tooltip" title="View Details">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-info" data-bs-toggle="tooltip" title="Assign Course">
+                                            <i class="bi bi-plus-circle"></i>
+                                        </button>
+                                        <button class="btn btn-outline-warning" data-bs-toggle="tooltip" title="Edit Profile">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="8" class="text-center text-muted py-4">
+                                    <i class="bi bi-people display-4 text-muted"></i>
+                                    <h6 class="mt-2">No faculty data available</h6>
+                                    <p class="small">Add faculty members to start tracking workload</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
 
-<table border="1" cellpadding="10">
-    <tr>
-        <th>Faculty Name</th>
-        <th>Total Courses Assigned</th>
-    </tr>
+                <!-- Workload Summary -->
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h6 class="mb-3">📊 Workload Summary</h6>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <span class="badge bg-danger"><i class="bi bi-exclamation-triangle"></i> High Workload: {{ high_workload_count }}</span>
+                        </div>
+                        <div class="col-md-4">
+                            <span class="badge bg-warning"><i class="bi bi-info-circle"></i> Medium Workload: {{ medium_workload_count }}</span>
+                        </div>
+                        <div class="col-md-4">
+                            <span class="badge bg-success"><i class="bi bi-check-circle"></i> Low Workload: {{ low_workload_count }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    {% for f in faculty_workload %}
-    <tr>
-        <td>{{ f.name }}</td>
-        <td>{{ f.courses }}</td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan="2">No faculty workload data available</td>
-    </tr>
-    {% endfor %}
-</table>
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Quick Stats -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">📋 Quick Statistics</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span>Average Courses per Faculty:</span>
+                    <span class="badge bg-primary">{{ avg_courses|floatformat:1 }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span>Max Faculty Workload:</span>
+                    <span class="badge bg-danger">{{ max_courses }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span>Underutilized Capacity:</span>
+                    <span class="badge bg-success">{{ total_capacity|add:total_students|add:"0" }}</span>
+                </div>
+                <hr>
+                <div class="alert alert-info">
+                    <h6 class="alert-heading">📈 Insights:</h6>
+                    <p class="mb-0 small">
+                        Optimal faculty workload: 2-3 courses<br>
+                        Ideal capacity utilization: 60-80%
+                    </p>
+                </div>
+            </div>
+        </div>
 
-<hr>
+        <!-- Actions -->
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">🚀 Quick Actions</h6>
+            </div>
+            <div class="card-body">
+                <a href="/admin/resources/" class="btn btn-primary w-100 mb-2" target="_blank">
+                    <i class="bi bi-gear"></i> Manage Resources
+                </a>
+                <a href="/attendance/" class="btn btn-outline-primary w-100 mb-2">
+                    <i class="bi bi-clock-history"></i> Attendance Dashboard
+                </a>
+                <a href="/food/" class="btn btn-outline-success w-100">
+                    <i class="bi bi-egg-fried"></i> Food Services
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
 
-<a href="{% url 'dashboard' %}">⬅ Back to Attendance</a>
+{% block extra_js %}
+<script>
+// Faculty search and filtering functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const facultySearch = document.getElementById('facultySearch');
+    const workloadFilter = document.getElementById('workloadFilter');
+    const facultyTable = document.getElementById('facultyTable');
+    const rows = facultyTable.querySelectorAll('tbody tr');
 
-</body>
-</html>
+    // Search functionality
+    facultySearch.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        filterFaculty();
+    });
+
+    // Filter functionality
+    workloadFilter.addEventListener('change', function() {
+        filterFaculty();
+    });
+
+    function filterFaculty() {
+        const searchTerm = facultySearch.value.toLowerCase();
+        const workloadValue = workloadFilter.value;
+
+        rows.forEach(row => {
+            const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            const workload = row.getAttribute('data-workload');
+            
+            const matchesSearch = name.includes(searchTerm);
+            const matchesFilter = workloadValue === 'all' || workload === workloadValue;
+            
+            row.style.display = (matchesSearch && matchesFilter) ? '' : 'none';
+        });
+    }
+
+    // Initialize tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Add row click functionality
+    rows.forEach(row => {
+        row.addEventListener('click', function(e) {
+            if (!e.target.closest('.btn-group')) {
+                this.classList.toggle('table-active');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.gauge-container {
+    position: relative;
+    margin: 0 auto;
+}
+
+.gauge {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: conic-gradient(
+        #4e73df 0% {{ utilization }}%, 
+        #eaecf4 {{ utilization }}% 100%
+
+    );
+}
+
+.gauge-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.shadow {
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
+}
+
+.border-left-primary { border-left: 0.25rem solid #4e73df !important; }
+.border-left-success { border-left: 0.25rem solid #1cc88a !important; }
+.border-left-info { border-left: 0.25rem solid #36b9cc !important; }
+.border-left-warning { border-left: 0.25rem solid #f6c23e !important; }
+</style>
+{% endblock %}

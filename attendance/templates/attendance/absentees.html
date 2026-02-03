@@ -1,20 +1,160 @@
-<h2>🚨 Absentees List</h2>
+{% extends 'base.html' %}
+{% load static %}
 
-<ul>
-    {% for a in absentees %}
-        <li>{{ a.student.name }} - Parent: {{ a.student.parent_email }}</li>
-    {% empty %}
-        <li>No absentees 🎉</li>
-    {% endfor %}
-</ul>
+{% block title %}Absentees - LPU Campus{% endblock %}
 
-<hr>
+{% block page_title %}
+🚨 Absentees
+{% endblock %}
 
-<h3>📩 Notifications</h3>
-<ul>
-    {% for msg in notifications %}
-        <li>{{ msg }}</li>
-    {% endfor %}
-</ul>
+{% block header_actions %}
+<div class="btn-group">
+    <a href="{% url 'attendance_dashboard' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-clipboard-data"></i> Faculty Sheet
+    </a>
+    <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">
+        <i class="bi bi-house"></i> Dashboard
+    </a>
+    <button id="manualRefresh" class="btn btn-light">
+        <i class="bi bi-arrow-clockwise"></i> Refresh
+    </button>
+ </div>
+{% endblock %}
 
-<a href="{% url 'dashboard' %}">⬅ Back to Dashboard</a>
+{% block content %}
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card border-left-danger shadow h-100">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-xs text-danger text-uppercase mb-1">Total Absentees</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="absenteeCount">{{ absentees|length }}</div>
+                </div>
+                <i class="bi bi-exclamation-triangle fa-2x text-gray-300"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card border-left-info shadow h-100">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-xs text-info text-uppercase mb-1">Auto-Refresh</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">Every 5s</div>
+                </div>
+                <i class="bi bi-arrow-repeat fa-2x text-gray-300"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-xs text-primary text-uppercase mb-1">Last Updated</div>
+                    <div class="h6 mb-0 text-gray-800" id="lastUpdated">—</div>
+                </div>
+                <i class="bi bi-clock-history fa-2x text-gray-300"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Absentees Today</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle">
+                        <thead class="table-danger">
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Parent Email</th>
+                            </tr>
+                        </thead>
+                        <tbody id="absenteesTable">
+                            {% for a in absentees %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ a.student.name }}</td>
+                                <td>{{ a.student.parent_email }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted py-4">No absentees 🎉</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Notifications</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-group" id="notificationsList">
+                    {% for msg in notifications %}
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-envelope me-2 text-primary"></i> {{ msg }}
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted">No notifications</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tableBody = document.getElementById('absenteesTable');
+    const notifList = document.getElementById('notificationsList');
+    const countEl = document.getElementById('absenteeCount');
+    const lastUpdatedEl = document.getElementById('lastUpdated');
+    const manualRefresh = document.getElementById('manualRefresh');
+
+    function render(items) {
+        tableBody.innerHTML = '';
+        if (!items || items.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-4">No absentees 🎉</td></tr>';
+        } else {
+            items.forEach((it, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${idx + 1}</td><td>${it.name}</td><td>${it.email}</td>`;
+                tableBody.appendChild(tr);
+            });
+        }
+        countEl.textContent = items.length || 0;
+        notifList.innerHTML = '';
+        (items || []).forEach(it => {
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex align-items-center';
+            li.innerHTML = `<i class="bi bi-envelope me-2 text-primary"></i> Notification sent to Parent of ${it.name} (${it.email})`;
+            notifList.appendChild(li);
+        });
+        const now = new Date();
+        lastUpdatedEl.textContent = now.toLocaleString();
+    }
+
+    function refreshAbsentees() {
+        fetch('/attendance/absentees.json')
+            .then(r => r.json())
+            .then(data => render(data.absentees || []))
+            .catch(() => {});
+    }
+
+    manualRefresh.addEventListener('click', refreshAbsentees);
+    refreshAbsentees();
+    setInterval(refreshAbsentees, 5000);
+});
+</script>
+{% endblock %}

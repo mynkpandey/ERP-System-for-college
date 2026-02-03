@@ -1,13 +1,54 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Order Success</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
 
-<h2>🎉 Order Placed Successfully!</h2>
+{% block title %}Order Successful - LPU Campus{% endblock %}
 
-<a href="{% url 'food_menu' %}">⬅ Back to Menu</a>
+{% block page_title %}
+✅ Order Placed Successfully
+{% endblock %}
 
-</body>
-</html>
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <div class="mb-4">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                </div>
+                
+                <h3 class="text-success mb-3">Order Confirmed!</h3>
+                <p class="text-muted mb-4">
+                    Your food order has been successfully placed. 
+                    You can pick up your meal at the selected time slot.
+                </p>
+
+                <div class="alert alert-info">
+                    <h6 class="alert-heading">📋 Order Details:</h6>
+                    <ul class="list-unstyled mb-0">
+                        <li><strong>Status:</strong> <span class="badge bg-success">Confirmed</span></li>
+                        <li><strong>Pickup Time:</strong> Your selected time slot</li>
+                        <li><strong>Location:</strong> Campus Food Court</li>
+                    </ul>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+                    <a href="{% url 'food_menu' %}" class="btn btn-primary me-md-2">
+                        <i class="bi bi-cart-plus"></i> Place Another Order
+                    </a>
+                    <a href="{% url 'peak_times' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-bar-chart"></i> View Peak Times
+                    </a>
+                </div>
+
+                <div class="mt-4 pt-3 border-top">
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle"></i> 
+                        You will receive a confirmation notification when your order is ready for pickup.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

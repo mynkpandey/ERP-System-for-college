@@ -34,11 +34,24 @@ def resource_dashboard(request):
             "courses": courses_count
         })
 
+    # Additional statistics for enhanced template
+    course_counts = [f['courses'] for f in faculty_workload]
+    max_courses = max(course_counts, default=0)
+    avg_courses = sum(course_counts) / len(course_counts) if course_counts else 0
+    high_workload_count = sum(1 for c in course_counts if c >= 4)
+    medium_workload_count = sum(1 for c in course_counts if 2 <= c < 4)
+    low_workload_count = sum(1 for c in course_counts if c < 2)
+
     return render(request, "resources/dashboard.html", {
         "total_blocks": total_blocks,
         "total_rooms": total_rooms,
         "total_capacity": total_capacity,
         "total_students": total_students,
         "utilization": round(utilization, 2),
-        "faculty_workload": faculty_workload
+        "faculty_workload": faculty_workload,
+        "max_courses": max_courses,
+        "avg_courses": round(avg_courses, 1),
+        "high_workload_count": high_workload_count,
+        "medium_workload_count": medium_workload_count,
+        "low_workload_count": low_workload_count
     })

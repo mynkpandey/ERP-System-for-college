@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Image for Attendance</title>
+</head>
+<body>
+<h2>Upload Image to Mark Attendance</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="image" accept="image/*">
+    <button type="submit">Mark via Image</button>
+</form>
+<a href="{% url 'dashboard' %}">Back</a>
+</body>
+</html>

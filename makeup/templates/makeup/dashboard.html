@@ -1,36 +1,231 @@
-<h2>📌 Faculty Makeup Attendance Dashboard</h2>
+{% extends 'base.html' %}
+{% load static %}
 
-{% for data in dashboard_data %}
+{% block title %}Makeup Classes Dashboard - LPU Campus{% endblock %}
 
-    <hr>
-    <h3>📘 Subject: {{ data.class.subject }}</h3>
-    <p>📅 Date: {{ data.class.date }}</p>
-    <p>🔑 Code: <b>{{ data.class.remedial_code }}</b></p>
+{% block page_title %}
+📊 Makeup Classes Attendance Dashboard
+{% endblock %}
 
-    <!-- ✅ Present Students -->
-    <h4 style="color:green;">✅ Present Students</h4>
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        {% for data in dashboard_data %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    📘 {{ data.class.subject }}
+                    <span class="badge bg-primary float-end">{{ data.class.remedial_code }}</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-calendar me-2"></i>
+                            <span><strong>Date:</strong> {{ data.class.date }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-clock me-2"></i>
+                            <span><strong>Time:</strong> {{ data.class.time }}</span>
+                        </div>
+                    </div>
+                </div>
 
-    {% if data.present %}
-        <ul>
-            {% for s in data.present %}
-                <li>{{ s.name }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No student marked attendance yet.</p>
-    {% endif %}
+                <div class="row">
+                    <!-- Present Students -->
+                    <div class="col-md-6">
+                        <div class="card border-success">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="card-title mb-0">
+                                    ✅ Present Students 
+                                    <span class="badge bg-light text-success">{{ data.present|length }}</span>
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                {% if data.present %}
+                                <div class="list-group list-group-flush">
+                                    {% for s in data.present %}
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>{{ s.name }}</span>
+                                        <span class="badge bg-success rounded-pill">{{ s.reg_no }}</span>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                <p class="text-muted text-center mb-0">
+                                    <i class="bi bi-info-circle"></i> No attendance marked yet
+                                </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
 
-    <!-- ❌ Absent Students -->
-    <h4 style="color:red;">❌ Absentees</h4>
+                    <!-- Absent Students -->
+                    <div class="col-md-6">
+                        <div class="card border-danger">
+                            <div class="card-header bg-danger text-white">
+                                <h6 class="card-title mb-0">
+                                    ❌ Absent Students
+                                    <span class="badge bg-light text-danger">{{ data.absent|length }}</span>
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                {% if data.absent %}
+                                <div class="list-group list-group-flush">
+                                    {% for s in data.absent|slice:":5" %}
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>{{ s.name }}</span>
+                                        <span class="badge bg-danger rounded-pill">{{ s.reg_no }}</span>
+                                    </div>
+                                    {% endfor %}
+                                    {% if data.absent|length > 5 %}
+                                    <div class="list-group-item text-center">
+                                        <small class="text-muted">
+                                            +{{ data.absent|length|add:"-5" }} more students
+                                        </small>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% else %}
+                                <p class="text-success text-center mb-0">
+                                    <i class="bi bi-check-circle"></i> All students present! 🎉
+                                </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    {% if data.absent %}
-        <ul>
-            {% for s in data.absent %}
-                <li>{{ s.name }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>All students are present 🎉</p>
-    {% endif %}
+                <!-- Statistics -->
+                <div class="row mt-3">
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="h4 mb-0 text-primary">{{ data.present|length }}</div>
+                            <small class="text-muted">Present</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="h4 mb-0 text-danger">{{ data.absent|length }}</div>
+                            <small class="text-muted">Absent</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            {% widthratio data.present|length data.present|length|add:data.absent|length 100 as attendance_rate %}
+                            <div class="h4 mb-0 text-success">{{ attendance_rate }}%</div>
+                            <small class="text-muted">Attendance Rate</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-calendar-x text-muted" style="font-size: 3rem;"></i>
+                <h4 class="text-muted mt-3">No Makeup Classes Scheduled</h4>
+                <p class="text-muted">There are currently no makeup classes in the system.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 
-{% endfor %}
+    <div class="col-md-4">
+        <!-- Summary Card -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">📋 Overall Statistics</h5>
+            </div>
+            <div class="card-body">
+                {% with total_classes=dashboard_data|length %}
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span>Total Classes:</span>
+                    <span class="badge bg-primary">{{ total_classes }}</span>
+                </div>
+                {% endwith %}
+                
+                {% with total_present=dashboard_data|map:"present"|map:"length"|sum %}
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span>Total Present:</span>
+                    <span class="badge bg-success">{{ total_present }}</span>
+                </div>
+                {% endwith %}
+
+                {% with total_absent=dashboard_data|map:"absent"|map:"length"|sum %}
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span>Total Absent:</span>
+                    <span class="badge bg-danger">{{ total_absent }}</span>
+                </div>
+                {% endwith %}
+
+                <hr>
+                <div class="alert alert-info">
+                    <h6 class="alert-heading">ℹ️ Dashboard Info:</h6>
+                    <p class="mb-0 small">
+                        This dashboard shows attendance for all scheduled makeup classes.
+                        Faculty can track student participation in remedial sessions.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0">🚀 Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <a href="{% url 'enter_remedial_code' %}" class="btn btn-primary w-100 mb-2">
+                    <i class="bi bi-plus-circle"></i> Mark Attendance
+                </a>
+                <a href="/admin/makeup/makeupclass/" class="btn btn-outline-primary w-100 mb-2" target="_blank">
+                    <i class="bi bi-gear"></i> Manage Classes
+                </a>
+                <a href="/attendance/" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-arrow-left"></i> Back to Main
+                </a>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0">📖 How to Use</h5>
+            </div>
+            <div class="card-body">
+                <ol class="list-group list-group-numbered">
+                    <li class="list-group-item">Faculty creates makeup classes in admin</li>
+                    <li class="list-group-item">Students enter 6-digit code to mark attendance</li>
+                    <li class="list-group-item">Track participation in this dashboard</li>
+                    <li class="list-group-item">Monitor attendance rates and absentees</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.list-group-item {
+    border: none;
+    padding: 0.75rem 1.25rem;
+}
+
+.border-success { border-left: 4px solid #28a745 !important; }
+.border-danger { border-left: 4px solid #dc3545 !important; }
+</style>
+
+{% endblock %}

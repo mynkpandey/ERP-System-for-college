@@ -1,91 +1,265 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Smart Attendance Dashboard</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% load static %}
 
-<h2>📌 Smart Attendance Dashboard</h2>
+{% block title %}Smart Attendance Dashboard - LPU Campus{% endblock %}
 
-{% if messages %}
-    {% for message in messages %}
-        <h3 style="color:{% if 'error' in message.tags %}red{% else %}green{% endif %};">{{ message }}</h3>
+{% block page_title %}� Smart Attendance Dashboard{% endblock %}
 
-    {% endfor %}
-{% endif %}
+{% block header_actions %}
+<div class="d-flex gap-2">
+    <div id="dashboard-clock" class="text-muted small"></div>
+</div>
+{% endblock %}
 
-<!-- Error Message -->
-{% if error %}
-    <h3 style="color:red;">{{ error }}</h3>
-{% endif %}
+{% block content %}
+<div class="row">
+    <!-- Statistics Cards -->
+    <div class="col-md-3 mb-4">
+        <div class="card dashboard-card bg-primary text-white">
+            <div class="card-body">
+                <i class="bi bi-people-fill display-4 mb-2"></i>
+                <h5 class="card-title">{{ records|length }}</h5>
+                <p class="card-text">Total Students</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card dashboard-card bg-success text-white">
+            <div class="card-body">
+                <i class="bi bi-check-circle-fill display-4 mb-2"></i>
+                <h5 class="card-title" id="present-count">{{ present_count }}</h5>
+                <p class="card-text">Present Today</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card dashboard-card bg-danger text-white">
+            <div class="card-body">
+                <i class="bi bi-x-circle-fill display-4 mb-2"></i>
+                <h5 class="card-title" id="absent-count">{{ absent_count }}</h5>
+                <p class="card-text">Absent Today</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card dashboard-card bg-warning text-dark">
+            <div class="card-body">
+                <i class="bi bi-percent display-4 mb-2"></i>
+                <h5 class="card-title" id="attendance-percentage">{{ attendance_percentage }}%</h5>
+                <p class="card-text">Attendance Rate</p>
+            </div>
+        </div>
+    </div>
+</div>
 
-<!-- ✅ Buttons Section -->
-<hr>
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">🚀 Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{% url 'mark_attendance' %}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-camera-fill me-2"></i>Mark Attendance
+                    </a>
+                    
+                    <a href="{% url 'upload_mark' %}" class="btn btn-outline-primary btn-lg">
+                        <i class="bi bi-upload me-2"></i>Upload Image
+                    </a>
+                    
+                    <a href="{% url 'self_check' %}" class="btn btn-info btn-lg">
+                        <i class="bi bi-gear-fill me-2"></i>Camera Check
+                    </a>
+                    
+                    <a href="{% url 'absentee_list' %}" class="btn btn-warning btn-lg">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>View Absentees
+                    </a>
+                    
+                    <a href="{% url 'attendance_dashboard' %}" class="btn btn-success btn-lg">
+                        <i class="bi bi-file-earmark-spreadsheet me-2"></i>Faculty Sheet
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<a href="{% url 'mark_attendance' %}">
-    <button style="padding:10px; font-size:16px;">
-        📷 Mark Attendance Using Camera
-    </button>
-</a>
+<!-- Class Slot Finalization -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">⏱ Finalize Class Slot & Export</h5>
+            </div>
+            <div class="card-body">
+                <form method="get" action="{% url 'finalize_slot' %}" class="row align-items-end">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Select Class Slot:</label>
+                        <select name="slot" class="form-select form-select-lg">
+                            {% for s in class_slots %}
+                                <option value="{{ s }}">{{ s }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="bi bi-file-earmark-excel me-2"></i>Finalize & Export Excel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-<a href="{% url 'attendance_dashboard' %}">
-    <button style="padding:10px; font-size:16px;">
-        📋 Generate Faculty Attendance Sheet
-    </button>
-</a>
+<!-- Attendance Records -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">📋 Today's Attendance Records</h5>
+                <span class="badge bg-primary">{{ records|length }} students</span>
+            </div>
+            <div class="card-body">
+                {% if records %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Student Name</th>
+                                    <th>Registration No</th>
+                                    <th>Status</th>
+                                    <th>Last Marked</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in records %}
+                                <tr id="record-{{ record.id }}" data-record-id="{{ record.id }}">
+                                    <td class="fw-bold">{{ record.student.name }}</td>
+                                    <td class="text-muted">{{ record.student.reg_no }}</td>
+                                    <td>
+                                        <span class="badge {% if record.status %}bg-success{% else %}bg-danger{% endif %}" id="status-badge-{{ record.id }}">
+                                            {% if record.status %}✅ Present{% else %}❌ Absent{% endif %}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted" id="last-marked-{{ record.id }}">
+                                            {% if record.last_marked_at %}
+                                                <small class="text-muted">{{ record.last_marked_at|timesince }} ago</small>
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a class="btn btn-outline-success" href="{% url 'faculty_mark_present' record.id %}?next=dashboard" data-bs-toggle="tooltip" title="Mark Present">
+                                                <i class="bi bi-check-lg"></i>
+                                            </a>
+                                            <a class="btn btn-outline-danger" href="{% url 'faculty_mark_absent' record.id %}?next=dashboard" data-bs-toggle="tooltip" title="Mark Absent">
+                                                <i class="bi bi-x-lg"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox display-4 text-muted"></i>
+                        <h5 class="text-muted mt-3">No attendance records found</h5>
+                        <p class="text-muted">Start by marking attendance using the camera or upload options.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
 
-<a href="{% url 'finalize_hour' %}">
-    <button style="padding:10px; font-size:16px;">
-        ⏳ Finalize Current Hour & Export Excel
-    </button>
-</a>
+{% endblock %}
 
-<form method="get" action="{% url 'finalize_slot' %}" style="margin-top:10px;">
-    <label>Select Class Slot:</label>
-    <select name="slot">
-        {% for s in class_slots %}
-            <option value="{{ s }}">{{ s }}</option>
-        {% endfor %}
-    </select>
-    <button type="submit" style="padding:10px; font-size:16px;">
-        ⏱ Finalize Selected Slot & Export Excel
-    </button>
-</form>
+{% block extra_js %}
+<script>
+// Initialize dashboard features
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Real-time clock
+    function updateClock() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        });
+        const dateString = now.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        
+        document.getElementById('dashboard-clock').innerHTML = `
+            <div class="text-end">
+                <div class="fw-bold">${timeString}</div>
+                <div class="small">${dateString}</div>
+            </div>
+        `;
+    }
+    
+    updateClock();
+    setInterval(updateClock, 1000);
 
-<a href="{% url 'absentee_list' %}">
-    <button style="padding:10px; font-size:16px;">
-        🚨 View Absentees List
-    </button>
-</a>
+    function getSlotParam() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('slot');
+    }
 
-<hr><br>
+    function refreshDashboard() {
+        const slot = getSlotParam();
+        const url = slot ? `/attendance/stats/?slot=${encodeURIComponent(slot)}` : `/attendance/stats/`;
+        fetch(url)
+            .then(r => r.json())
+            .then(data => {
+                const pc = document.getElementById('present-count');
+                const ac = document.getElementById('absent-count');
+                const ap = document.getElementById('attendance-percentage');
+                if (pc) pc.textContent = data.present_count;
+                if (ac) ac.textContent = data.absent_count;
+                if (ap) ap.textContent = `${data.attendance_percentage}%`;
+                if (Array.isArray(data.records)) {
+                    data.records.forEach(rec => {
+                        const badge = document.getElementById(`status-badge-${rec.id}`);
+                        const lm = document.getElementById(`last-marked-${rec.id}`);
+                        if (badge) {
+                            badge.classList.remove('bg-success','bg-danger');
+                            badge.classList.add(rec.status ? 'bg-success' : 'bg-danger');
+                            badge.textContent = rec.status ? '✅ Present' : '❌ Absent';
+                        }
+                        if (lm) {
+                            lm.textContent = rec.last_marked_at_display ? rec.last_marked_at_display : '-';
+                        }
+                    });
+                }
+            })
+            .catch(() => {});
+    }
 
-<!-- ✅ Attendance Table -->
-<table border="1" cellpadding="10">
-    <tr>
-        <th>Student</th>
-        <th>Status</th>
-    </tr>
-
-    {% for record in records %}
-    <tr>
-        <td>{{ record.student.name }}</td>
-
-        <td>
-            {% if record.status %}
-                ✅ Present
-            {% else %}
-                ❌ Absent
-            {% endif %}
-        </td>
-
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan="2">No attendance records found.</td>
-    </tr>
-    {% endfor %}
-</table>
-
-</body>
-</html>
+    refreshDashboard();
+    setInterval(refreshDashboard, 5000);
+});
+</script>
+{% endblock %}

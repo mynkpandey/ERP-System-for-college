@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Faculty Sheet - LPU Campus{% endblock %}
+
+{% block page_title %}
+📋 Faculty Sheet
+{% endblock %}
+
+{% block header_actions %}
+<div class="btn-group">
+    <a href="{% url 'mark_attendance' %}" class="btn btn-light">
+        <i class="bi bi-camera"></i> Mark via Camera
+    </a>
+    <a href="{% url 'finalize_hour' %}" class="btn btn-outline-primary">
+        <i class="bi bi-download"></i> Finalize Current Hour
+    </a>
+    <a href="{% url 'attendance_dashboard' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-clockwise"></i> Refresh
+    </a>
+ </div>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-xs text-primary text-uppercase mb-1">Total Students</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_count }}</div>
+                    </div>
+                    <i class="bi bi-people fa-2x text-gray-300"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card border-left-success shadow h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-xs text-success text-uppercase mb-1">Present</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ present_count }}</div>
+                    </div>
+                    <i class="bi bi-check-circle fa-2x text-gray-300"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card border-left-danger shadow h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-xs text-danger text-uppercase mb-1">Absent</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ absent_count }}</div>
+                    </div>
+                    <i class="bi bi-x-circle fa-2x text-gray-300"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card border-left-info shadow h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-xs text-info text-uppercase mb-1">Attendance %</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ attendance_percentage }}%</div>
+                    </div>
+                    <i class="bi bi-graph-up fa-2x text-gray-300"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="row g-2">
+            <div class="col-md-6">
+                <input id="searchInput" type="text" class="form-control" placeholder="Search by student name or reg no...">
+            </div>
+            <div class="col-md-3">
+                <select id="statusFilter" class="form-select">
+                    <option value="all">All</option>
+                    <option value="present">Present</option>
+                    <option value="absent">Absent</option>
+                </select>
+            </div>
+            <div class="col-md-3 text-end">
+                <a href="{% url 'absentee_list' %}" class="btn btn-outline-danger">
+                    <i class="bi bi-exclamation-triangle"></i> View Absentees
+                </a>
+            </div>
+        </div>
+    </div>
+ </div>
+
+<!-- Records Table -->
+<div class="card shadow">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Today’s Attendance</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped align-middle" id="facultyTable">
+                <thead class="table-primary">
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Registration</th>
+                        <th>Status</th>
+                        <th>Last Marked</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr data-status="{% if record.status %}present{% else %}absent{% endif %}">
+                        <td>{{ forloop.counter }}</td>
+                        <td class="student-name">{{ record.student.name }}</td>
+                        <td class="student-reg">{{ record.student.reg_no }}</td>
+                        <td>
+                            {% if record.status %}
+                                <span class="badge bg-success"><i class="bi bi-check-circle"></i> Present</span>
+                            {% else %}
+                                <span class="badge bg-danger"><i class="bi bi-x-circle"></i> Absent</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if record.last_marked_at %}
+                                {{ record.last_marked_at|date:"Y-m-d H:i:s" }}
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a class="btn btn-outline-success" href="{% url 'faculty_mark_present' record.id %}?next={% url 'attendance_dashboard' %}">
+                                    <i class="bi bi-check2-circle"></i> Present
+                                </a>
+                                <a class="btn btn-outline-danger" href="{% url 'faculty_mark_absent' record.id %}?next={% url 'attendance_dashboard' %}">
+                                    <i class="bi bi-x-circle"></i> Absent
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            <i class="bi bi-info-circle"></i> No records yet
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const rows = document.querySelectorAll('#facultyTable tbody tr');
+
+    function applyFilters() {
+        const term = (searchInput.value || '').toLowerCase();
+        const status = statusFilter.value;
+        rows.forEach(row => {
+            const name = row.querySelector('.student-name').textContent.toLowerCase();
+            const reg = row.querySelector('.student-reg').textContent.toLowerCase();
+            const rowStatus = row.getAttribute('data-status');
+            const matchesSearch = name.includes(term) || reg.includes(term);
+            const matchesStatus = status === 'all' || status === rowStatus;
+            row.style.display = (matchesSearch && matchesStatus) ? '' : 'none';
+        });
+    }
+
+    searchInput.addEventListener('input', applyFilters);
+    statusFilter.addEventListener('change', applyFilters);
+});
+</script>
+{% endblock %}
