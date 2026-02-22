@@ -22,11 +22,12 @@
                 </p>
 
                 <div class="alert alert-success">
-                    <h6 class="alert-heading">� Attendance Details:</h6>
+                    <h6 class="alert-heading">Attendance Details:</h6>
                     <ul class="list-unstyled mb-0">
                         <li><strong>Student:</strong> {{ student.name }}</li>
                         <li><strong>Registration No:</strong> {{ student.reg_no }}</li>
-                        <li><strong>Makeup Class:</strong> {{ makeup_class.name }}</li>
+                        <li><strong>Makeup Class:</strong> {{ makeup_class.subject }}</li>
+                        <li><strong>Remedial Code:</strong> {{ makeup_class.remedial_code }}</li>
                         <li><strong>Status:</strong> <span class="badge bg-success">Present</span></li>
                     </ul>
                 </div>

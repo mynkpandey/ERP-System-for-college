@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Add Makeup Class - LPU Campus{% endblock %}
+
+{% block page_title %}
+Add Makeup Class
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">New Makeup Class</h5>
+            </div>
+            <div class="card-body">
+                {% if error %}
+                <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+                <form method="POST" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Subject</label>
+                        <input type="text" name="subject" class="form-control" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Faculty</label>
+                            <select name="faculty" class="form-select" required>
+                                <option value="">Select Faculty</option>
+                                {% for f in faculties %}
+                                <option value="{{ f.id }}">{{ f.name }} ({{ f.department }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Date</label>
+                            <input type="date" name="date" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Remedial Code</label>
+                        <input type="text" name="remedial_code" class="form-control" value="{{ generated_code }}" maxlength="10">
+                        <div class="form-text">Leave as is to auto-generate. Must be unique.</div>
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="{% url 'makeup_dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Create Class</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="card mt-3">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="h5 mb-0 text-primary">Step 1</div>
+                            <small class="text-muted">Create class</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="h5 mb-0 text-primary">Step 2</div>
+                            <small class="text-muted">Share code</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <div class="h5 mb-0 text-primary">Step 3</div>
+                            <small class="text-muted">Students mark attendance</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+}
+</style>
+
+{% endblock %}
